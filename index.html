@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Matching Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .game-container {
+            display: flex;
+            justify-content: space-between;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        .column-container {
+            height: 75vh; /* Set a fixed height for the columns */
+            overflow-y: auto; /* Enable vertical scrolling */
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .column {
+            width: 100%; /* Occupy the entire width of the container */
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .word {
+            cursor: pointer;
+            margin: 5px 0;
+            padding: 8px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+        }
+        .selected {
+            background-color: #cfe2f3; /* Highlight color, change as needed */
+        }
+        .matched {
+            display: none;
+        }
+        #score {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Word Matching Game</h1>
+
+    <div class="game-container">
+        <div class="column-container" id="left-column-container">
+            <div class="column" id="left-column">
+                <!-- Keys will be displayed here -->
+            </div>
+        </div>
+
+        <div class="column-container" id="right-column-container">
+            <div class="column" id="right-column">
+                <!-- Values will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <div id="score">Score: <span id="score-value">0</span></div>
+
+    <script>
+        const wordMap = new Map([
+        ["about","על/אודות"],
+    ["after","אחרי"],
+    ["afternoon","אחר הצהריים"],
+    ["all","הכל"],
+    ["another","אחר"],
+    ["before","לפני"],
+    ["breakfast","ארוחת בוקר"],
+    ["call","לקרוא/להתקשר"],
+    ["catch","לתפוס"],
+    ["clean","לנקות"],
+    ["each","כל אחד"],
+    ["evening","ערב"],
+    ["everyone","כולם"],
+    ["fall","ליפול"],
+    ["get","לקבל"],
+    ["glass","זכוכית"],
+    ["guess","לנחש"],
+    ["home","בית"],
+    ["kind of","סוג של"],
+    ["late","מאוחר"],
+    ["look at","להסתכל על"],
+    ["lunch","א.צהריים"],
+    ["many","הרבה"],
+    ["moon","ירח"],
+    ["parents","הורים"],
+    ["pick up","לאסוף"],
+    ["quiet","שקט"],
+    ["rich","עשיר"],
+    ["sometimes","לפעמים"],
+    ["sport","ספורט"],
+    ["supper","א.ערב"],
+    ["thanks","תודה"],
+    ["thing","דבר"],
+    ["think","לחשוב"],
+    ["too","גם"],
+    ["town","עיר"],
+    ["until","עד"],
+    ["us","אנחנו"],
+    ["work","עבודה"],
+    ["world","עולם"],
+    ["wrong","טעות"],
+    ["you're","אתה"],
+    ["welcome","ברוך הבא"],
+    ]);
+
+        const leftColumnContainer = document.getElementById('left-column-container');
+        const rightColumnContainer = document.getElementById('right-column-container');
+        const leftColumn = document.getElementById('left-column');
+        const rightColumn = document.getElementById('right-column');
+        const scoreValue = document.getElementById('score-value');
+        let score = 0;
+
+        // Shuffle the keys and values independently
+        const shuffledKeys = Array.from(wordMap.keys()).sort(() => Math.random() - 0.5);
+        const shuffledValues = Array.from(wordMap.values()).sort(() => Math.random() - 0.5);
+
+        // Display shuffled words in columns
+        shuffledKeys.forEach((key, index) => {
+            leftColumn.innerHTML += `<div class="word" data-key="${key}">${key}</div>`;
+            rightColumn.innerHTML += `<div class="word" data-value="${shuffledValues[index]}">${shuffledValues[index]}</div>`;
+        });
+
+        const words = document.querySelectorAll('.word');
+        let selectedWord = null;
+
+        words.forEach(word => {
+            word.addEventListener('click', handleWordClick);
+        });
+
+        function handleWordClick() {
+            const clickedWord = this;
+
+            if (selectedWord) {
+                // If a word is already selected, check for a match
+                const selectedKey = selectedWord.getAttribute('data-key');
+                const selectedValue = selectedWord.getAttribute('data-value');
+                const clickedKey = clickedWord.getAttribute('data-key');
+                const clickedValue = clickedWord.getAttribute('data-value');
+                if (wordMap.get(selectedKey) === clickedValue || wordMap.get(clickedKey) === selectedValue) {
+                    // If there's a match, hide the words and update the score
+                    selectedWord.style.display = 'none';
+                    clickedWord.style.display = 'none';
+                    score += 1;
+                    scoreValue.textContent = score;
+                }
+
+                // Reset the selected word and remove highlighting
+                selectedWord.classList.remove('selected');
+                selectedWord = null;
+            } else {
+                // If no word is selected, save the clicked word
+                selectedWord = clickedWord;
+                selectedWord.classList.add('selected');
+            }
+        }
+    </script>
+</body>
+</html>
